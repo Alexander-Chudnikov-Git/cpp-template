@@ -23,6 +23,8 @@ int main(const int argc, const char** argv)
 		option_parser.debugLog(argc, argv);
 	}
 
+	auto main_program = APP::MainProgram();
+
 	SPD_INFO_CLASS(COMMON::d_settings_group_application, "Application stopped");
 
 	return 0;
