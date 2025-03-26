@@ -1,8 +1,5 @@
 #include "option_parser.hpp"
 
-#include "spdlog/fmt/bundled/format.h"
-#include "spdlog_wrapper.hpp"
-
 namespace UTILS
 {
 OptionParser::OptionParser(const std::string& app_name, const std::string& app_description) :
