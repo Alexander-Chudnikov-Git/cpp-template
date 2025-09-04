@@ -18,8 +18,10 @@
 #define FMT_COLOR_WHITE	 "\033[37m"
 #define FMT_COLOR_RESET	 "\033[0m"
 
-#define SPD_LOG_CLASS(level, class_name, message)                                                                              \
+#define SPD_LOG_CLASS(level, class_name, message)                                                                                                  \
 	spdlog::log(level, fmt::format("[{}{}{}] {}", FMT_COLOR_CYAN, class_name, FMT_COLOR_RESET, message))
+
+#define SPD_DEBUG_CLASS(class_name, message) SPD_LOG_CLASS(spdlog::level::debug, class_name, message)
 
 #define SPD_INFO_CLASS(class_name, message) SPD_LOG_CLASS(spdlog::level::info, class_name, message)
 

@@ -1,8 +1,7 @@
 include(cmake/utils/get_linux_kernel.cmake)
 include(GNUInstallDirs)
 
-if(CMAKE_RELEASE)
-    set(CMAKE_BUILD_TYPE "Release" CACHE INTERNAL "Build as release" FORCE)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_compile_options(
         -fvisibility=hidden
         -pedantic
@@ -32,10 +31,21 @@ if(CMAKE_RELEASE)
         -Ofast
     )
 else()
-    set(CMAKE_BUILD_TYPE "Debug" CACHE INTERNAL "Build as debug" FORCE)
     add_compile_options(
         -Wall
         -Wextra
+    )
+endif()
+
+list(APPEND PROJECT_LIBRARIES_LIST pthread)
+
+if(ENABLE_ASAN)
+    list(APPEND PROJECT_LIBRARIES_LIST asan)
+    list(APPEND PROJECT_LIBRARIES_LIST ubsan)
+    add_compile_options(
+        -fsanitize=address
+        -fsanitize=undefined
+        -static-libasan
     )
 endif()
 

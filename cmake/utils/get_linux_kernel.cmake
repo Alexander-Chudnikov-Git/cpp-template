@@ -7,15 +7,18 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-if(OS_RELEASE_RESULT)
-    message(WARNING "Unknown kernel ID, /etc/os-release not found.")
-    set(CMAKE_SYSTEM_ID "unknown")
-endif()
+if(OS_RELEASE_RESULT OR NOT CMAKE_SYSTEM_ID)
+    message(WARNING "Unknown kernel ID, /etc/os-release not found. Attempting to use lsb_release.")
 
-message(STATUS "Kernel Name:       ${CMAKE_SYSTEM_NAME}")
-message(STATUS "Kernel Version:    ${CMAKE_SYSTEM_VERSION}")
-message(STATUS "Kernel ID:         ${CMAKE_SYSTEM_ID}")
-message(STATUS "Processor:         ${CMAKE_SYSTEM_PROCESSOR}")
+    find_program(LSB_RELEASE_EXEC lsb_release)
+
+    if(LSB_RELEASE_EXEC)
+        execute_process(COMMAND ${LSB_RELEASE_EXEC} -is OUTPUT_VARIABLE CMAKE_SYSTEM_ID OUTPUT_STRIP_TRAILING_WHITESPACE)
+    else()
+        message(WARNING "Unknown kernel ID, lsb_release not found. Distribution ID treated as unknown.")
+        set(CMAKE_SYSTEM_ID "unknown")
+    endif()
+endif()
 
 execute_process(
     COMMAND bash -c "echo $XDG_CURRENT_DESKTOP $DESKTOP_SESSION $XDG_SESSION_DESKTOP $GDMSESSION"
@@ -27,12 +30,15 @@ if("${WM_ENV}" MATCHES ".*bspwm.*|.*i3.*|.*awesome.*|.*dwm.*|.*xmonad.*|.*herbst
     message(STATUS "Detected a tiling window manager")
     set(CMAKE_SYSTEM_TILING 1)
 else()
-    message(STATUS "No tiling window manager detected")
     set(CMAKE_SYSTEM_TILING 0)
 endif()
 
-if("${CMAKE_SYSTEM_ID}" STREQUAL "arch")
-    message(STATUS "Oh, I see, you are the arch linux enjoyer after all :3")
-elseif("${CMAKE_SYSTEM_ID}" STREQUAL "ubuntu")
-    message(WARNING "I highly doubdt that you know what you are doing :/")
-endif()
+message(STATUS "Kernel Name:    ${CMAKE_SYSTEM_NAME}")
+message(STATUS "Kernel Version: ${CMAKE_SYSTEM_VERSION}")
+message(STATUS "Kernel ID:      ${CMAKE_SYSTEM_ID}")
+message(STATUS "Processor:      ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS "Tiling WM:      ${CMAKE_SYSTEM_TILING}")
+
+string(TOLOWER "${CMAKE_SYSTEM_ID}" CMAKE_SYSTEM_ID)
+
+include(cmake/utils/fun/linux_distro_ramble.cmake)

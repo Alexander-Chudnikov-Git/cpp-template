@@ -3,9 +3,9 @@ include(ExternalProject)
 
 include(cmake/utils/list_all_subdirectories.cmake)
 
-message(STATUS "CXX compiler:      ${CMAKE_CXX_COMPILER_ID}")
+message(STATUS "CXX compiler: ${CMAKE_CXX_COMPILER_ID}")
 
-if(NOT CMAKE_RELEASE)
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CMAKE_CXX_FLAGS    "${CMAKE_CXX_FLAGS} -g")
     set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS}")
 endif()
@@ -33,6 +33,7 @@ set(PROJECT_DIRECTORIES_LIST)
 include(cmake/libraries/fmt.cmake)
 include(cmake/libraries/spdlog.cmake)
 include(cmake/libraries/cxxopts.cmake)
+include(cmake/libraries/tomlplusplus.cmake)
 include(cmake/libraries/common.cmake)
 include(cmake/libraries/utils.cmake)
 include(cmake/libraries/app.cmake)
@@ -48,9 +49,6 @@ else()
     message(FATAL_ERROR "Unsupported OS: ${CMAKE_SYSTEM_NAME}")
 endif()
 
-# [THREAD FIX]
-list(APPEND PROJECT_LIBRARIES_LIST pthread)
-
 # [TARGET LNKING]
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_DIRECTORIES_LIST})
@@ -63,6 +61,6 @@ if(CMAKE_SYSTEM_TILING)
 endif()
 
 # [SOURCE GROUPS]
-source_group("Main"         FILES ${PROJECT_MAIN_SRC_FILES})
+source_group("Main" FILES ${PROJECT_MAIN_SRC_FILES})
 
-include(cmake/utils/upx_compress.cmake)
+include(cmake/utils/postbuild_scripts.cmake)
