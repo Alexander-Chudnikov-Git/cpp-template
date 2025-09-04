@@ -5,6 +5,7 @@
 
 #include <cxxopts.hpp>
 #include <memory>
+#include <ranges>
 #include <string>
 #include <type_traits>
 
@@ -13,16 +14,29 @@ namespace UTILS
 class OptionParser
 {
 public:
-	OptionParser(const std::string& app_name, const std::string& app_description);
+	static std::shared_ptr<OptionParser> instance();
+
 	~OptionParser();
 
+private:
+	OptionParser();
+
+	OptionParser(const OptionParser&)			 = delete;
+	OptionParser(OptionParser&&)				 = delete;
+	OptionParser& operator=(const OptionParser&) = delete;
+	OptionParser& operator=(OptionParser&&)		 = delete;
+
+	void initialize();
+
+public:
+	void   setDescription(const std::string& app_name, const std::string& app_description);
 	void   parseOptions(const int argc, const char** argv);
 	bool   hasOption(const std::string& name) const;
 	void   addOption(const std::string& name, const std::string& description);
 	size_t getOptionCount(const std::string& name) const;
 
 	void logHelp() const;
-	void debugLog(const int argc, const char** argv) const;
+	void debugLog() const;
 
 public:
 	template<typename T>
@@ -66,8 +80,7 @@ public:
 
 		if (!hasOption(name))
 		{
-			SPD_WARN_CLASS(COMMON::d_settings_group_options,
-						   fmt::format("Option {} not found. Returning default value.", name));
+			SPD_WARN_CLASS(COMMON::d_settings_group_options, fmt::format("Option {} not found. Returning default value.", name));
 			return T {};
 		}
 
@@ -89,6 +102,10 @@ public:
 		}
 		return T {};
 	}
+
+protected:
+	static std::shared_ptr<OptionParser> m_instance;
+	static std::mutex					 m_mutex;
 
 private:
 	std::unique_ptr<cxxopts::Options>	  m_options;

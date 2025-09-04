@@ -19,4 +19,3 @@ function(list_all_subdirectories BASE_DIR OUTPUT_VAR)
 
     set(${OUTPUT_VAR} ${SUBDIRS} PARENT_SCOPE)
 endfunction()
-
