@@ -5,9 +5,9 @@ This is the todo file for cpp template project.
 ## Utils
 
 Tasks related to utilities section of the project.
-- [ ] Implement notification manager using ntfy.sh
 - [ ] Implement some database integrarion (local)
 - [ ] Implement telegram bot integration
+- [ ] Improve notification managerm by adding support for action callback
 
 ## Release
 
@@ -25,3 +25,4 @@ Tasks related to utilities section of the project.
 ## Release
 
 - [x] Init project repository https://github.com/Alexander-Chudnikov-Git/cpp-template
+- [x] Implement notification manager using ntfy.sh
