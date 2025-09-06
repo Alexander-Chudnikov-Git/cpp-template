@@ -11,6 +11,8 @@ if(OS_RELEASE_RESULT)
     set(CMAKE_SYSTEM_ID "unknown")
 endif()
 
+set(CMAKE_SYSTEM_TILING 0)
+
 message(STATUS "Kernel Name:    ${CMAKE_SYSTEM_NAME}")
 message(STATUS "Kernel Version: ${CMAKE_SYSTEM_VERSION}")
 message(STATUS "Kernel ID:      ${CMAKE_SYSTEM_ID}")

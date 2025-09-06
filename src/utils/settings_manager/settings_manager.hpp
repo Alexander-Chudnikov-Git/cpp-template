@@ -1,43 +1,37 @@
 #ifndef SETTINGS_MANAGER_HPP
 #define SETTINGS_MANAGER_HPP
 
-#include "spdlog_wrapper.hpp"
+#include "manager_singleton.hpp"
 
 #include <cstdlib>
 #include <filesystem>
-#include <fstream>
 #include <memory>
 #include <ostream>
-#include <sstream>
 #include <string>
 #include <toml++/toml.hpp>
-#include <type_traits>
 
 namespace fs = std::filesystem;
 
 namespace UTILS
 {
-class SettingsManager
+class SettingsManager : public UTILS::ManagerSingleton<SettingsManager>
 {
-public:
-	static std::shared_ptr<SettingsManager> instance();
-
-	~SettingsManager();
+	friend class ManagerSingleton<SettingsManager>;
 
 private:
-	SettingsManager();
+	SettingsManager() = default;
 
-	SettingsManager(const SettingsManager&)			   = delete;
-	SettingsManager(SettingsManager&&)				   = delete;
-	SettingsManager& operator=(const SettingsManager&) = delete;
-	SettingsManager& operator=(SettingsManager&&)	   = delete;
+	void initialize() override;
 
-	void initialize();
 	void create_default_settings();
 
 	static std::vector<std::string_view> split_path(std::string_view path);
 
 public:
+	std::string_view get_manager_name() const override;
+
+	~SettingsManager();
+
 	bool load_settings();
 	bool load_settings(fs::path file_path);
 	bool save_settings();
@@ -53,20 +47,19 @@ public:
 	std::string dump() const;
 	void		dump(std::ostream& output) const;
 
-protected:
-	static std::shared_ptr<SettingsManager> m_instance;
-	static std::mutex						m_mutex;
-
 private:
 	fs::path					 m_config_path;
 	std::unique_ptr<toml::table> m_config;
 	std::unique_ptr<toml::table> m_config_default;
+
+protected:
+	mutable std::mutex m_settings_mutex;
 };
 
 template<typename T>
 T SettingsManager::get_setting(std::string_view path, T default_value) const
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
+	std::lock_guard<std::mutex> lock(m_settings_mutex);
 
 	if (!this->m_config)
 	{
@@ -94,7 +87,7 @@ T SettingsManager::get_setting(std::string_view path, T default_value) const
 template<typename T>
 bool SettingsManager::set_setting(std::string_view path, T value)
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
+	std::lock_guard<std::mutex> lock(m_settings_mutex);
 
 	if (!this->m_config)
 	{

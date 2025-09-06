@@ -1,45 +1,31 @@
-#include "option_parser.hpp"
+#include "option_manager.hpp"
 
 #include "settings_manager.hpp"
 #include "spdlog_wrapper.hpp"
 
 namespace UTILS
 {
-std::shared_ptr<OptionParser> OptionParser::m_instance = nullptr;
-std::mutex					  OptionParser::m_mutex;
 
-std::shared_ptr<OptionParser> OptionParser::instance()
+std::string_view OptionManager::get_manager_name() const
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
-	if (m_instance == nullptr)
-	{
-		SPD_DEBUG_CLASS(COMMON::d_settings_group_utils, "Initializing option parser.");
-		m_instance = std::shared_ptr<OptionParser>(new OptionParser());
-	}
-
-	return m_instance;
+	return "Option Manager";
 }
 
-OptionParser::OptionParser()
-{
-	this->initialize();
-}
-
-void OptionParser::initialize()
+void OptionManager::initialize()
 {
 	this->m_options = std::make_unique<cxxopts::Options>(COMMON::d_project_name, COMMON::d_project_description);
 	this->m_options->allow_unrecognised_options();
 }
 
-void OptionParser::setDescription(const std::string& app_name, const std::string& app_description)
+void OptionManager::set_description(const std::string& app_name, const std::string& app_description)
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
+	std::lock_guard<std::mutex> lock(this->m_options_mutex);
 	this->m_options = std::make_unique<cxxopts::Options>(app_name, app_description);
 
 	return;
 }
 
-OptionParser::~OptionParser()
+OptionManager::~OptionManager()
 {
 	this->m_options.reset();
 	this->m_parsed_options.reset();
@@ -47,12 +33,12 @@ OptionParser::~OptionParser()
 	return;
 }
 
-void OptionParser::parseOptions(const int argc, const char** argv)
+void OptionManager::parse_options(const int argc, const char** argv)
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
+	std::lock_guard<std::mutex> lock(this->m_options_mutex);
 	if (!this->m_options)
 	{
-		SPD_ERROR_CLASS(COMMON::d_settings_group_options, "Unable to parse options, Option Parser is not initialized.");
+		SPD_ERROR_CLASS(COMMON::d_settings_group_options, "Unable to parse options, option manager is not initialized.");
 	}
 
 	try
@@ -78,9 +64,9 @@ void OptionParser::parseOptions(const int argc, const char** argv)
 	exit(1);
 }
 
-bool OptionParser::hasOption(const std::string& name) const
+bool OptionManager::has_option(const std::string& name) const
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
+	std::lock_guard<std::mutex> lock(this->m_options_mutex);
 
 	if (!this->m_parsed_options)
 	{
@@ -91,13 +77,13 @@ bool OptionParser::hasOption(const std::string& name) const
 	return this->m_parsed_options->count(name) > 0;
 }
 
-void OptionParser::addOption(const std::string& name, const std::string& description)
+void OptionManager::add_option(const std::string& name, const std::string& description)
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
+	std::lock_guard<std::mutex> lock(this->m_options_mutex);
 
 	if (!this->m_options)
 	{
-		SPD_ERROR_CLASS(COMMON::d_settings_group_options, "Unable to add option, Option Parser is not initialized.");
+		SPD_ERROR_CLASS(COMMON::d_settings_group_options, "Unable to add option, option manager is not initialized.");
 		return;
 	}
 
@@ -106,9 +92,9 @@ void OptionParser::addOption(const std::string& name, const std::string& descrip
 	return;
 }
 
-size_t OptionParser::getOptionCount(const std::string& name) const
+size_t OptionManager::get_option_count(const std::string& name) const
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
+	std::lock_guard<std::mutex> lock(this->m_options_mutex);
 
 	if (!this->m_parsed_options)
 	{
@@ -119,13 +105,13 @@ size_t OptionParser::getOptionCount(const std::string& name) const
 	return this->m_parsed_options->count(name);
 }
 
-void OptionParser::logHelp() const
+void OptionManager::log_help() const
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
+	std::lock_guard<std::mutex> lock(this->m_options_mutex);
 
 	if (!this->m_options)
 	{
-		SPD_ERROR_CLASS(COMMON::d_settings_group_options, "Unable to get help message, Option Parser is not initialized.");
+		SPD_ERROR_CLASS(COMMON::d_settings_group_options, "Unable to get help message, option manager is not initialized.");
 		return;
 	}
 
@@ -139,9 +125,9 @@ void OptionParser::logHelp() const
 	}
 }
 
-void OptionParser::debugLog() const
+void OptionManager::debug_log() const
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
+	std::lock_guard<std::mutex> lock(this->m_options_mutex);
 
 	auto settings_manager = UTILS::SettingsManager::instance();
 
