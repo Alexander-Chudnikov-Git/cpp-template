@@ -36,6 +36,14 @@ target_compile_definitions(${CURRENT_LIBRARY_NAME} PUBLIC
                             COMPILER_ID="${CMAKE_CXX_COMPILER_ID}"
                             COMPILER_VERSION="${CMAKE_CXX_COMPILER_VERSION}")
 
+
+target_compile_definitions(${CURRENT_LIBRARY_NAME} PUBLIC
+                            SYSTEM_NAME="${CMAKE_SYSTEM_NAME}"
+                            SYSTEM_VERSION="${CMAKE_SYSTEM_VERSION}"
+                            SYSTEM_ID="${CMAKE_SYSTEM_ID}"
+                            SYSTEM_PROCESSOR="${CMAKE_SYSTEM_PROCESSOR}"
+                            SYSTEM_ARCHITECTURE="${CMAKE_SYSTEM_PROCESSOR}")
+
 list(APPEND PROJECT_INCLUDE_DIRS ${CURRENT_SRC_DIR})
 list(APPEND PROJECT_LIBRARIES_LIST ${CURRENT_LIBRARY_NAME})
 list(APPEND PROJECT_TRANSLATION_TARGETS ${CURRENT_LIBRARY_NAME})

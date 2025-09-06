@@ -2,7 +2,6 @@
 
 #include "spdlog_wrapper.hpp"
 
-#include <algorithm>
 #include <filesystem>
 #include <memory>
 #include <toml++/impl/table.hpp>
@@ -53,6 +52,11 @@ static constexpr std::string_view default_toml_format = R"(
     [application]
     name = "{project_name}"
     authors = ["{developer_name} <{developer_email}>"]
+    [notifications]
+    enabled = true
+    uri = ""
+    username = ""
+    password = ""
 )";
 
 std::string default_toml = fmt::format(default_toml_format,
@@ -63,23 +67,10 @@ std::string default_toml = fmt::format(default_toml_format,
 
 namespace UTILS
 {
-std::shared_ptr<SettingsManager> SettingsManager::m_instance = nullptr;
-std::mutex						 SettingsManager::m_mutex;
 
-std::shared_ptr<SettingsManager> SettingsManager::instance()
+std::string_view SettingsManager::get_manager_name() const
 {
-	if (m_instance == nullptr)
-	{
-		SPD_DEBUG_CLASS(COMMON::d_settings_group_utils, "Initializing settings manager.");
-		m_instance = std::shared_ptr<SettingsManager>(new SettingsManager());
-	}
-
-	return m_instance;
-}
-
-SettingsManager::SettingsManager()
-{
-	this->initialize();
+	return "Settings Manager";
 }
 
 void SettingsManager::initialize()
@@ -170,7 +161,7 @@ bool SettingsManager::load_settings()
 
 bool SettingsManager::load_settings(fs::path file_path)
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
+	std::lock_guard<std::mutex> lock(m_settings_mutex);
 
 	if (!fs::exists(file_path) || fs::is_directory(file_path) || file_path.empty())
 	{
@@ -235,7 +226,7 @@ bool SettingsManager::save_settings()
 
 bool SettingsManager::save_settings(fs::path file_path)
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
+	std::lock_guard<std::mutex> lock(m_settings_mutex);
 
 	if (fs::is_directory(file_path) || file_path.empty())
 	{
@@ -287,7 +278,7 @@ bool SettingsManager::save_settings(fs::path file_path)
 
 bool SettingsManager::restore_defaults()
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
+	std::lock_guard<std::mutex> lock(m_settings_mutex);
 
 	if (!this->m_config_default)
 	{
