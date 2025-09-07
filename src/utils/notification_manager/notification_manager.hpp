@@ -3,6 +3,7 @@
 
 #include "manager_singleton.hpp"
 
+#include <future>
 #include <string>
 
 namespace UTILS
@@ -44,18 +45,20 @@ public:
 	std::string_view get_manager_name() const override;
 
 	~NotificationManager();
+	void shutdown();
 
-	bool send_notification(std::string_view				   topic,
+	void send_notification(std::string_view				   topic,
 						   std::string_view				   message,
 						   std::string_view				   title,
 						   NotificationPriority			   priority		   = NotificationPriority::DEFAULT,
 						   const std::vector<std::string>& tags			   = {},
 						   bool							   enable_markdown = false,
 						   std::string_view				   schedule		   = "");
-	bool send_notification(const NotificationMessage& notification);
+	void send_notification(const NotificationMessage& notification);
 
 protected:
-	static std::mutex m_notification_mutex;
+	static std::mutex			   m_notification_mutex;
+	std::vector<std::future<void>> m_futures;
 };
 } // namespace UTILS
 

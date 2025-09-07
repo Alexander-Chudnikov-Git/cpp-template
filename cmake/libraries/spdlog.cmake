@@ -1,9 +1,9 @@
 set(CURRENT_LIBRARY_NAME spdlog)
 
 FetchContent_Declare(
-  ${CURRENT_LIBRARY_NAME}
-  GIT_REPOSITORY https://github.com/gabime/spdlog.git
-  GIT_TAG        v1.15.3
+    ${CURRENT_LIBRARY_NAME}
+    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+    GIT_TAG        v1.15.3
 )
 
 #set(SPDLOG_FMT_EXTERNAL ON CACHE BOOL "Use external fmt library" FORCE)

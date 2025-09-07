@@ -53,7 +53,7 @@ static constexpr std::string_view default_toml_format = R"(
     name = "{project_name}"
     authors = ["{developer_name} <{developer_email}>"]
     [notifications]
-    enabled = true
+    enabled = false
     uri = ""
     username = ""
     password = ""

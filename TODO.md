@@ -21,8 +21,8 @@ Tasks related to utilities section of the project.
 - [x] Create logger
 - [x] Create option parser
 - [x] Create settings manager
+- [x] Create notification manager
 
 ## Release
 
 - [x] Init project repository https://github.com/Alexander-Chudnikov-Git/cpp-template
-- [x] Implement notification manager using ntfy.sh

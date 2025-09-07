@@ -6,9 +6,9 @@ option(CMAKE_DISABLE_IN_SOURCE_BUILD "Disable in-source build" ON)
 include(cmake/utils/build_protection.cmake)
 
 project(cpp-template
-    VERSION     0.0.3
+    VERSION     0.0.4
     DESCRIPTION "C++ project template"
-    LANGUAGES   CXX
+    LANGUAGES   C CXX
 )
 
 if("${PROJECT_NAME}" MATCHES " ")

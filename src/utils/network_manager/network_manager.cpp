@@ -46,6 +46,8 @@ NetworkResponse NetworkManager::make_request(const NetworkRequest& request)
 		return response;
 	}
 
+	curl_easy_reset(this->m_curl.get());
+
 	char error_buffer[CURL_ERROR_SIZE] = {0};
 	set_common_options(request, error_buffer);
 
@@ -67,7 +69,6 @@ NetworkResponse NetworkManager::make_request(const NetworkRequest& request)
 				{
 					response.error = fmt::format("Failed to open file for upload: {}", request.upload_file_path);
 					SPD_ERROR_CLASS(COMMON::d_settings_group_utils, response.error);
-					curl_easy_cleanup(this->m_curl.get());
 					return response;
 				}
 
@@ -120,7 +121,6 @@ NetworkResponse NetworkManager::make_request(const NetworkRequest& request)
 			SPD_ERROR_CLASS(COMMON::d_settings_group_utils, response.error);
 
 			curl_slist_free_all(header_list);
-			curl_easy_cleanup(this->m_curl.get());
 
 			return response;
 		}
@@ -145,7 +145,6 @@ NetworkResponse NetworkManager::make_request(const NetworkRequest& request)
 	{
 		curl_slist_free_all(header_list);
 	}
-	curl_easy_cleanup(this->m_curl.get());
 
 	SPD_DEBUG_CLASS(COMMON::d_settings_group_utils, fmt::format("Request to {} completed with HTTP code {}", request.url, response.http_code));
 

@@ -30,6 +30,8 @@ set(PROJECT_LIBRARIES_LIST)
 set(PROJECT_DIRECTORIES_LIST)
 
 # [LIBRARIES]
+include(cmake/libraries/lmdb.cmake)
+include(cmake/libraries/lmdbxx.cmake)
 include(cmake/libraries/curl.cmake)
 include(cmake/libraries/fmt.cmake)
 include(cmake/libraries/spdlog.cmake)
@@ -51,10 +53,10 @@ else()
 endif()
 
 # [TARGET LNKING]
-target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE_DIRS})
-target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_DIRECTORIES_LIST})
-target_link_directories(${PROJECT_NAME}    PRIVATE ${PROJECT_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME}      PRIVATE ${PROJECT_LIBRARIES_LIST})
+target_include_directories(${PROJECT_NAME} PRIVATE   ${PROJECT_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE   ${PROJECT_DIRECTORIES_LIST})
+target_link_directories(${PROJECT_NAME}    PRIVATE   ${PROJECT_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME}      PRIVATE   ${PROJECT_LIBRARIES_LIST})
 
 if(CMAKE_SYSTEM_TILING)
     target_compile_definitions(${CURRENT_LIBRARY_NAME} PUBLIC
