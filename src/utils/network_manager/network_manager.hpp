@@ -21,9 +21,9 @@ enum class HttpMethod
 struct NetworkRequest
 {
 	std::string										 url;
-	HttpMethod										 method = HttpMethod::GET;
-	std::vector<std::pair<std::string, std::string>> headers;
-	std::string										 body;
+	HttpMethod										 method			 = HttpMethod::GET;
+	std::vector<std::pair<std::string, std::string>> headers		 = {};
+	std::string										 body			 = {};
 	std::string										 user_agent		 = std::format("Mozilla/5.0 ({}; {}) {}/{}",
 																				   COMMON::d_system_name,
 																				   COMMON::d_system_version,

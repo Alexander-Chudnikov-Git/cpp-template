@@ -216,5 +216,8 @@ Temporary Items
 # Build directory
 build/
 
+# Install directory
+install/
+
 # Clang cache
 .cache/

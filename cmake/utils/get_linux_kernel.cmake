@@ -1,11 +1,14 @@
 execute_process(
     COMMAND cat /etc/os-release
-    COMMAND grep -oP "^ID=\\K[a-zA-Z0-9]*"
+    COMMAND grep -oP "^ID=(\"|)\\K[a-zA-Z0-9]*"
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     RESULT_VARIABLE OS_RELEASE_RESULT
     OUTPUT_VARIABLE CMAKE_SYSTEM_ID
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
+
+string(REPLACE "\"" "" CMAKE_SYSTEM_ID ${CMAKE_SYSTEM_ID})
+string(REPLACE "'" "" CMAKE_SYSTEM_ID ${CMAKE_SYSTEM_ID})
 
 if(OS_RELEASE_RESULT OR NOT CMAKE_SYSTEM_ID)
     message(WARNING "Unknown kernel ID, /etc/os-release not found. Attempting to use lsb_release.")

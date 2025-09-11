@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=C++ Template
-GenericName=cpp-template
-Comment=C++ Template project executable
-Exec=/usr/local/bin/cpp-template
-Icon=/usr/local/share/icons/hicolor/64x64/apps/cpp-template.svg
-Categories=Utility
